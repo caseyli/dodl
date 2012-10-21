@@ -1,2 +1,143 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Dartboard</title>
+		<link rel="stylesheet" type="text/css" href="stylesheets/application.css" />
+        <style type="text/css" media="screen">
+
+        </style>
+        <script src="javascripts/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="javascripts/jquery-1.8.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="javascripts/dartboard.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" charset="utf-8">
+	
+		var R;
+		var rad = Math.PI / 180;
+		var totalSize, playSize, textSize;
+		var centerX, centerY;
+		
+		var highlight_clr = "yellow";
+		
+		var sector_dt_attrs = [{fill: "red", stroke: "white"}, {fill: "green", stroke: "white"}];
+		var sector_ab_attrs = [{fill: "black", stroke: "white"}, {fill: "wheat", stroke: "white"}];
+		var text_attrs = ({fill: "white", stroke: "none", opacity: 1});
+	
+		var total_score = 0;
+		var darts_left = 3;
+	
+		function register_segment_events(obj, segment, color){
+			// Add events based on what the user is doing...
+			obj.mouseover(function () {
+				$("#bottom_middle").html(dartboard.names[segment] + " = " + dartboard.values[segment]);
+				this.stop().animate({fill: highlight_clr},5);
+			});
+			
+			obj.mouseout(function() {
+				this.stop().animate({fill: color},5);
+			});
+			
+			obj.click(function() {
+				
+				
+				if(darts_left == 0){
+					darts_left = 3;
+					total_score = 0;
+				}
+
+				total_score += dartboard.values[segment];
+				darts_left -= 1;
+		
+				$("#top_right").html("Total Score:" + total_score);
+				$("#bottom_left").html("Darts Left:" + darts_left);
+
+			});
+		}
+		
+		function sector(x, y, r, a1, a2, params, segment) {
+	
+			var flag = (a2 - a1) > 180;
+			a1 = ((a1 % 360) * rad) + 0.16; //Offset from complete vertical line
+			a2 = ((a2 % 360) * rad) + 0.16; //Offset from complete vertical line
+			
+			s = R.path([["M", x, y], ["l", r * Math.cos(a1), r * Math.sin(a1)], ["A", r, r, 0, +flag, 1, x + r * Math.cos(a2), y + r * Math.sin(a2)], ["z"]]).attr(params);
+			
+			register_segment_events(s,segment, params["fill"]);
+			
+			return s;
+		}
+	
+		function draw_board(){
+			var dartboard_rings = R.set(),
+				txt_ring = R.set(),
+				angle = 0,
+				popangle = 0,
+				angleplus = 360 / 20,	//20 Segements in a dartboard
+				toggle = 0
+			
+			R.clear();
+			
+			// Figure out all the sizes
+			totalSize = ($(window).width() / 4);
+			playSize = totalSize - (totalSize*0.18);
+			textSize = totalSize - (totalSize*0.09);
+			centerX = totalSize;
+			centerY = totalSize;
+			
+			text_attrs["font-size"] = totalSize/10; //Adjust font size based on screen resolution
+				
+			// Build the dartboard rings by going from the outside in, also add the numbers on the outside
+			for (i = 0; i < 20; i++) {
+				//Text Ring
+				popangle = angle + (angleplus / 2);
+				txt_ring.push(R.text(centerX + textSize * (Math.cos((-popangle * rad)+0.16)), centerY + textSize * (Math.sin((-popangle * rad)+0.16)), DARTBOARD_TEXT_ORDER[i]).attr(text_attrs));	
+	
+				//Double Ring
+				dartboard_rings.push(sector(centerX, centerY, playSize, angle, angle + angleplus, sector_dt_attrs[toggle], ("d" + DARTBOARD_ORDER[i])));
+				//Single B Ring
+				dartboard_rings.push(sector(centerX, centerY, playSize-(playSize*0.061), angle, angle + angleplus, sector_ab_attrs[toggle], ("b" + DARTBOARD_ORDER[i])));
+				//Triple Ring
+				dartboard_rings.push(sector(centerX, centerY, playSize-(playSize*0.4), angle, angle + angleplus, sector_dt_attrs[toggle], ("t" + DARTBOARD_ORDER[i])));
+				//Single A Ring
+				dartboard_rings.push(sector(centerX, centerY, playSize-(playSize*0.46), angle, angle + angleplus, sector_ab_attrs[toggle], ("a" + DARTBOARD_ORDER[i])));
+				
+				//Increment the various counters
+				angle += angleplus;
+				toggle = 1 - toggle;
+			}
+		
+			//Single Bullseye
+			sb = R.circle(centerX,centerY,playSize-(playSize*0.90)).attr( {fill: "green", stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
+			register_segment_events(sb, "sb", "green");
+			//Double Bullseye
+			db = R.circle(centerX,centerY,playSize-(playSize*0.95)).attr( {fill: "red", stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
+			register_segment_events(db, "db", "red");
+			//Out of bounds
+			ob = R.circle(centerX,centerY,totalSize).attr( {fill: "black", stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
+			ob.toBack();
+			register_segment_events(ob, "ob", "black");			
+			
+			R.toBack();
+		}
+		
+        window.onload = function () {
+		
+		R = Raphael("board",750, 750);
+		
+		// ##### Main
+		draw_board();
+
+        };
+
+        </script>
+    </head>
+    <body onresize="draw_board()">
+        <div id="canvas">
+			<div id="board"></div>
+			<div id="top_left"></div>
+			<div id="top_middle"></div>
+			<div id="top_right"></div>
+			<div id="bottom_left"></div>
+			<div id="bottom_middle"></div>
+			<div id="bottom_right"></div>
+        </div>
+    </body>

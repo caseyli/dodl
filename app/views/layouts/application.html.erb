@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dodl</title>
+  <title>Downtown Ottawa Dart League (DODL)</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-<body>
-
-<p class="notice"><%= notice %></p>
-<p class="alert"><%= alert %></p>
-
-<%= yield %>
-
+<body onload="load()">
+	<div class="header">
+		<%= render 'layouts/header' %>
+	</div>
+	<div class="main-body">
+		<p class="notice"><%= notice %></p>
+		<p class="alert"><%= alert %></p>
+		<%= yield %>
+	</div>
 </body>
 </html>

@@ -11,3 +11,78 @@
  *= require_self
  *= require_tree .
  */
+
+#canvas {
+  height: 100%;
+  width: 50%;
+  margin:0 auto;
+  text-align: center;
+}
+#left{
+  float:left;
+}
+
+#right{
+  float:right;
+}
+
+#top_left {
+  width:20%;
+  height:100px; 
+  position:relative;
+  top:-750px;
+  left:0px;
+  float:left;
+}
+
+#top_middle {
+  width:60%;
+  height: 40px;
+  position:relative;
+  top:-750px;
+  left:0px;
+  float:left;
+}
+
+#top_right {
+  width:20%;
+  height:100px; 
+  position:relative;
+  top:-750px;
+  left:0px;
+  float:left;
+}
+
+#board {
+  height: 750px;
+  width: 735px;
+  position:relative;
+  top: 50px;
+}
+
+#bottom_left {
+  width:20%;
+  height:100px;   
+  position:relative;
+  top:-120px;
+  left:0px;
+  float:left; 
+}
+
+#bottom_middle {
+  width:60%;
+  height: 40px;
+  position:relative;
+  top:-60px;
+  left:0px;
+  float:left;
+}
+
+#bottom_right {
+  width:20%;
+  height:100px;   
+  position:relative;
+  top:-120px;
+  left:0px;
+  float:left; 
+}

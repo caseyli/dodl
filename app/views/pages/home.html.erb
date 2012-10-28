@@ -2,7 +2,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Dartboard</title>
-		<link rel="stylesheet" type="text/css" href="stylesheets/application.css" />
+		<link rel="stylesheet" type="text/css" href="stylesheets/application.css.scss" />
         <style type="text/css" media="screen">
 
         </style>
@@ -16,13 +16,16 @@
 		var totalSize, playSize, textSize;
 		var centerX, centerY;
 		
-		var highlight_clr = "yellow";
+		var highlight_clr = "<%= @highlight_clr.value %>";
+		var dt_ring_clr = "<%= @dt_ring_clr.value %>";
+		var dt_ring_clr_2 =  "<%= @dt_ring_clr_2.value %>";
+		var sector_clr =  "<%= @sector_clr.value %>";
+		var sector_clr_2 = "<%= @sector_clr_2.value %>";
 		
-		var sector_dt_attrs = [{fill: "red", stroke: "white"}, {fill: "green", stroke: "white"}];
-		var sector_ab_attrs = [{fill: "black", stroke: "white"}, {fill: "wheat", stroke: "white"}];
+		var sector_dt_attrs = [{fill: dt_ring_clr, stroke: "white"}, {fill: dt_ring_clr_2, stroke: "white"}];
+		var sector_ab_attrs = [{fill: sector_clr, stroke: "white"}, {fill: sector_clr_2, stroke: "white"}];
 		var text_attrs = ({fill: "white", stroke: "none", opacity: 1});
 	
-		var total_score = 0;
 		var darts_left = 3;
 	
 		function register_segment_events(obj, segment, color){
@@ -38,16 +41,12 @@
 			
 			obj.click(function() {
 				
-				
 				if(darts_left == 0){
 					darts_left = 3;
-					total_score = 0;
 				}
 
-				total_score += dartboard.values[segment];
 				darts_left -= 1;
 		
-				$("#top_right").html("Total Score:" + total_score);
 				$("#bottom_left").html("Darts Left:" + darts_left);
 
 			});
@@ -106,13 +105,13 @@
 			}
 		
 			//Single Bullseye
-			sb = R.circle(centerX,centerY,playSize-(playSize*0.90)).attr( {fill: "green", stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
-			register_segment_events(sb, "sb", "green");
+			sb = R.circle(centerX,centerY,playSize-(playSize*0.90)).attr( {fill: dt_ring_clr_2, stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
+			register_segment_events(sb, "sb", dt_ring_clr_2);
 			//Double Bullseye
-			db = R.circle(centerX,centerY,playSize-(playSize*0.95)).attr( {fill: "red", stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
-			register_segment_events(db, "db", "red");
+			db = R.circle(centerX,centerY,playSize-(playSize*0.95)).attr( {fill: dt_ring_clr, stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
+			register_segment_events(db, "db", dt_ring_clr);
 			//Out of bounds
-			ob = R.circle(centerX,centerY,totalSize).attr( {fill: "black", stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
+			ob = R.circle(centerX,centerY,totalSize).attr( {fill: sector_clr, stroke: "white", "stroke-width": 1,"stroke-linejoin": "round"});
 			ob.toBack();
 			register_segment_events(ob, "ob", "black");			
 			
@@ -130,7 +129,7 @@
 
         </script>
     </head>
-    <body onresize="draw_board()">
+    <body>
         <div id="canvas">
 			<div id="board"></div>
 			<div id="top_left"></div>

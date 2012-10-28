@@ -1,5 +1,7 @@
 Dodl::Application.routes.draw do
   
+  resources :settings
+
   devise_for :users
 
   root :to => "pages#home"
